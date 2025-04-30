@@ -1,11 +1,14 @@
 Tạo tài khoản cloud trên GITHUB Từ tài khoản mail outlook
 Tạo folder dùng chung trên GITHUB
+Link tài khoản
+https://github.com/ha-dung-1085/du-an-dung-chung
 
 Cài đặt ứng dụng Vs code, python, github → lưu ý: tích chọn và xác định Path lưu dữ liệu trong bước cài đặt
 Cài đặt extension python, git, jupyter trong VS code
 
 Tải folder dùng chung hoặc các thay đổi trong folder dùng chung về máy tính/mac→ code
 git pull origin main
+Lưu ý: 
 
 Cập nhật thay đổi lên GITHUB→code
 git add .
