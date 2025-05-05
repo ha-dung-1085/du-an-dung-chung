@@ -1,9 +1,0 @@
-Parameters,Position,Value
-MEAN_COVERAGE,2.50%,0.35
-MEAN_COVERAGE,97.50%,0.71
-PCT_EXC_DUPE,2.50%,0.0046
-PCT_EXC_DUPE,97.50%,0.0151
-mapped_percent,2.50%,99.33
-mapped_percent,97.50%,99.67
-total_reads,2.50%,20000000
-total_reads,97.50%,62000000
