@@ -1,0 +1,64 @@
+import pandas as pd
+import os
+import shutil
+import re
+
+# --- CẤU HÌNH ĐƯỜNG DẪN ---
+FILE_1_PATH = r"C:\Users\XN\du-an-dung-chung\HNG_5_GW + 450 region_20260302\WG\Metadata.xlsx"
+FILE_2_PATH = r"C:\Users\XN\du-an-dung-chung\HNG_5_GW + 450 region_20260302\WG\HNG.xlsx"
+
+def merge_data_final():
+    print("\n--- BAT DAU NHIEM VU: TRON DU LIEU ---")
+
+    try:
+        # 1. Sao lưu File Metadata
+        if not os.path.exists(FILE_1_PATH):
+            print(f"X Loi: Khong tim thay file tai {FILE_1_PATH}")
+            return
+        
+        backup_path = FILE_1_PATH.replace(".xlsx", "_BACKUP_FINAL.xlsx")
+        shutil.copy(FILE_1_PATH, backup_path)
+        print(f"✔ Da tao ban sao luu: {os.path.basename(backup_path)}")
+
+        # 2. Doc du lieu tu sheet 'QC' va 'Wet-lab V2'
+        all_sheets_f1 = pd.read_excel(FILE_1_PATH, sheet_name=None)
+        if 'QC' not in all_sheets_f1:
+            print("X Loi: Khong tim thay sheet 'QC'")
+            return
+        
+        df1 = all_sheets_f1['QC']
+        df2 = pd.read_excel(FILE_2_PATH, sheet_name='Wet-lab V2')
+
+        # 3. Xu ly SampleID: Cat 'R1' o cuoi va xoa khoang trang
+        # Dung Regex de dam bao chi cat R1 o cuoi chuoi
+        key = 'SampleID'
+        df1[key] = df1[key].astype(str).str.strip().str.replace(r'R1$', '', regex=True)
+        df2[key] = df2[key].astype(str).str.strip()
+
+        print(f"[*] Da chuan hoa ID cho {len(df1)} mau (da cat 'R1').")
+
+        # 4. Tron du lieu (Left Join)
+        df_merged = pd.merge(df1, df2, on=key, how='left', suffixes=('', '_HNG'))
+
+        # 5. Ghi de vao file Metadata goc
+        all_sheets_f1['QC'] = df_merged
+        with pd.ExcelWriter(FILE_1_PATH, engine='openpyxl') as writer:
+            for s_name, s_data in all_sheets_f1.items():
+                s_data.to_excel(writer, sheet_name=s_name, index=False)
+        
+        print(f"✔ Cap nhat thanh cong vao file: {os.path.basename(FILE_1_PATH)}")
+
+        # 6. HIEN THI KET QUA (Dong nay da duoc sua de khong bao gio loi ngoac)
+        print("\n" + "="*50)
+        print("XEM TRUOC 10 DONG DAU TIEN:")
+        # Lay 2 cot dau tien de hien thi kiem tra
+        print(df_merged.iloc[:10, :2]) 
+        print("="*50)
+
+    except PermissionError:
+        print("X Loi: Hay DONG file Excel truoc khi chay!")
+    except Exception as e:
+        print(f"X Loi he thong: {str(e)}")
+
+if __name__ == "__main__":
+    merge_data_final()

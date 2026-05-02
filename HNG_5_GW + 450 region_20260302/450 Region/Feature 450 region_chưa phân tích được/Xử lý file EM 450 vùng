@@ -1,0 +1,79 @@
+import pandas as pd
+import os
+import shutil
+
+# --- CẤU HÌNH ĐƯỜNG DẪN ---
+FILE_PATH = r"C:\Users\XN\du-an-dung-chung\HNG_5_GW + 450 region_20260302\450 Region\Feature 450 region_chưa phân tích được\TMEM.csv"
+def process_tmem_data(file_path):
+    print("\n--- BẮT ĐẦU NHIỆM VỤ: XỬ LÝ TẦN SUẤT END-MOTIF ---")
+    
+    try:
+        # Kiểm tra file tồn tại
+        if not os.path.exists(file_path):
+            print(f"X Lỗi: Không tìm thấy file tại {file_path}")
+            return
+
+        # 1. ĐẾM DÒNG/CỘT TRƯỚC KHI BACKUP
+        raw_df = pd.read_csv(file_path)
+        so_dong, so_cot = raw_df.shape
+        print(f"[*] Thông tin file gốc: {so_dong} dòng, {so_cot} cột.")
+        print("-" * 30)
+
+        # 2. TẠO FILE BACK UP
+        backup_path = file_path.replace(".csv", "_BACKUP.csv")
+        shutil.copy(file_path, backup_path)
+        print(f"✔ Bước 1: Đã tạo bản sao lưu tại: {os.path.basename(backup_path)}")
+
+        # 3. XỬ LÝ DỮ LIỆU
+        df = raw_df.copy()
+        all_columns = df.columns.tolist()
+        
+        # Nhận diện các cột Motif_Vùng (ví dụ TTTT_chr1:...)
+        # Dựa trên cấu trúc tên cột có dấu "_" và dấu ":"
+        motif_region_cols = [c for c in all_columns if "_" in c and ":" in c]
+        
+        # Lấy danh sách các Motif duy nhất (phần chữ trước dấu "_")
+        unique_motifs = sorted(list(set([c.split('_')[0] for c in motif_region_cols])))
+        print(f"[*] Tìm thấy {len(unique_motifs)} loại end-motif.")
+        
+        cols_to_remove = []
+
+        # 4. TÍNH TẦN SUẤT CHUNG CHO MỖI MOTIF
+        for motif in unique_motifs:
+            # Gom các cột vùng thuộc motif này
+            related_cols = [c for c in motif_region_cols if c.startswith(f"{motif}_")]
+            
+            # Tính trung bình cộng theo hàng (axis=1)
+            df[motif] = df[related_cols].mean(axis=1)
+            
+            # Đưa các cột vùng vào danh sách chờ xóa
+            cols_to_remove.extend(related_cols)
+
+        # 5. BỎ CÁC CỘT CHI TIẾT VÙNG
+        df_final = df.drop(columns=cols_to_remove)
+        
+        # 6. GHI ĐÈ FILE GỐC
+        df_final.to_csv(file_path, index=False)
+        print(f"✔ Bước 2: Đã cập nhật file gốc thành công.")
+
+        # 7. HIỂN THỊ KẾT QUẢ
+        print("\n" + "="*70)
+        print(f"{'DANH SÁCH 10 DÒNG ĐẦU TIÊN (SAU XỬ LÝ)':^70}")
+        print("="*70)
+        
+        # Hiển thị SampleID và các cột Motif mới tạo
+        display_cols = ['SampleID'] + unique_motifs
+        # Chỉ lấy những cột thực sự tồn tại để tránh lỗi
+        display_cols = [c for c in display_cols if c in df_final.columns]
+        
+        print(df_final[display_cols].head(10).to_string(index=False))
+        print("="*70)
+        print(f"[*] Kết quả: {df_final.shape[0]} dòng, {df_final.shape[1]} cột.")
+
+    except PermissionError:
+        print("X Lỗi: Không thể ghi file. Hãy ĐÓNG file TMEM.csv trong Excel trước khi chạy!")
+    except Exception as e:
+        print(f"X Lỗi hệ thống: {str(e)}")
+
+if __name__ == "__main__":
+    process_tmem_data(FILE_PATH)

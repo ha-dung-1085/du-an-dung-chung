@@ -1,0 +1,117 @@
+import pandas as pd
+import os
+
+# --- CẤU HÌNH ĐƯỜNG DẪN ---
+FILE_PATH = r"C:\Users\XN\Downloads\HNG_20260302\HNG_20260302\TMEM.csv"
+
+def survey_tmem_motifs(file_path):
+    print("\n--- NHIỆM VỤ 1: KHẢO SÁT FILE VÀ THỐNG KÊ LOẠI END-MOTIF ---")
+    
+    try:
+        # 1. Kiểm tra file tồn tại
+        if not os.path.exists(file_path):
+            print(f"X Lỗi: Không tìm thấy file tại:\n{file_path}")
+            return
+
+        # 2. Đọc file
+        raw_df = pd.read_csv(file_path)
+        so_dong, so_cot = raw_df.shape
+        
+        print(f"✔ Kết nối file thành công!")
+        print(f"[*] Tổng số dòng (mẫu): {so_dong}")
+        print(f"[*] Tổng số cột gốc: {so_cot}")
+        print("-" * 50)
+
+        # 3. Thống kê số lượng từng loại End-motif
+        all_columns = raw_df.columns.tolist()
+        
+        # Tìm các cột có cấu trúc "Motif_VịTrí" (Ví dụ: TTTT_chr1:...)
+        # Điều kiện: có dấu "_" và phần sau dấu "_" có chứa dấu ":" (đặc trưng của vị trí gene)
+        motif_cols = [c for c in all_columns if "_" in c and ":" in c]
+        
+        if not motif_cols:
+            print("! Cảnh báo: Không tìm thấy cột nào khớp cấu trúc 'Motif_VịTrí'.")
+            return
+
+        # Tách lấy tên Motif (phần trước dấu "_" đầu tiên)
+        motif_names = [c.split('_')[0] for c in motif_cols]
+        
+        # Đếm tần suất xuất hiện của mỗi loại Motif
+        motif_counts = pd.Series(motif_names).value_counts().sort_index()
+
+        print(f"{'LOẠI END-MOTIF':<20} | {'SỐ LƯỢNG CỘT (VÙNG)':<20}")
+        print("-" * 45)
+        for motif, count in motif_counts.items():
+            print(f"{motif:<20} | {count:<20}")
+        
+        print("-" * 45)
+        print(f"[*] Tổng cộng có {len(motif_counts)} loại Motif duy nhất.")
+        print(f"[*] Tổng số cột vùng sẽ được xử lý: {len(motif_cols)}")
+        print("\n=> Dữ liệu hợp lệ. Sẵn sàng thực hiện tính toán trung bình ở bước sau.")
+
+    except PermissionError:
+        print("X Lỗi: File đang mở ở ứng dụng khác. Hãy đóng file trước khi chạy.")
+    except Exception as e:
+        print(f"X Lỗi hệ thống: {str(e)}")
+
+if __name__ == "__main__":
+    survey_tmem_motifs(FILE_PATH)
+
+    import pandas as pd
+import os
+
+# --- CẤU HÌNH ĐƯỜNG DẪN ---
+FILE_PATH = r"C:\Users\XN\Downloads\HNG_20260302\HNG_20260302\TMFLEN.csv"
+
+def survey_tmflen_features(file_path):
+    print("\n--- NHIỆM VỤ 1: KHẢO SÁT FILE TMFLEN VÀ THỐNG KÊ LOẠI FLEN ---")
+    
+    try:
+        # 1. Kiểm tra file tồn tại
+        if not os.path.exists(file_path):
+            print(f"X Lỗi: Không tìm thấy file tại:\n{file_path}")
+            return
+
+        # 2. Đọc file
+        raw_df = pd.read_csv(file_path)
+        so_dong, so_cot = raw_df.shape
+        
+        print(f"✔ Kết nối file thành công!")
+        print(f"[*] Tổng số dòng (mẫu): {so_dong}")
+        print(f"[*] Tổng số cột gốc: {so_cot}")
+        print("-" * 50)
+
+        # 3. Thống kê số lượng từng loại Flen (Fragment Length)
+        all_columns = raw_df.columns.tolist()
+        
+        # Tìm các cột có cấu trúc "Flen_VịTrí" (Ví dụ: 250_chr1:...)
+        # Điều kiện: Tên cột bắt đầu bằng số, có dấu "_" và có dấu ":" ở phần vị trí
+        flen_cols = [c for c in all_columns if "_" in c and ":" in c]
+        
+        if not flen_cols:
+            print("! Cảnh báo: Không tìm thấy cột nào khớp cấu trúc 'Flen_VịTrí'.")
+            return
+
+        # Tách lấy tên Flen (phần trước dấu "_" đầu tiên)
+        flen_names = [c.split('_')[0] for c in flen_cols]
+        
+        # Đếm số lượng cột cho mỗi loại Flen
+        flen_counts = pd.Series(flen_names).value_counts().sort_index()
+
+        print(f"{'LOẠI FLEN (BP)':<20} | {'SỐ LƯỢNG CỘT (VÙNG)':<20}")
+        print("-" * 45)
+        for flen, count in flen_counts.items():
+            print(f"{flen:<20} | {count:<20}")
+        
+        print("-" * 45)
+        print(f"[*] Tổng cộng có {len(flen_counts)} loại Flen duy nhất.")
+        print(f"[*] Tổng số cột vùng Flen sẽ được xử lý: {len(flen_cols)}")
+        print("\n=> Khảo sát hoàn tất. Sẵn sàng cho bước tính toán trung bình.")
+
+    except PermissionError:
+        print("X Lỗi: File đang bị mở. Hãy đóng file TMFLEN.csv trước khi chạy.")
+    except Exception as e:
+        print(f"X Lỗi hệ thống: {str(e)}")
+
+if __name__ == "__main__":
+    survey_tmflen_features(FILE_PATH)

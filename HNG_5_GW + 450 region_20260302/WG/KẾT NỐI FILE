@@ -1,0 +1,82 @@
+import pandas as pd
+import os
+import shutil
+
+# --- CẤU HÌNH ĐƯỜNG DẪN CÁC FILE ---
+FILE_1_PATH = r"C:\Users\XN\du-an-dung-chung\HNG_5_GW + 450 region_20260302\450 Region\HNG.xlsx"
+FILE_2_PATH = r"C:\Users\XN\du-an-dung-chung\HNG_5_GW + 450 region_20260302\WG\Metadata.xlsx"
+
+def execute_task_2_v2():
+    print("--- BẮT ĐẦU NHIỆM VỤ 2: ĐỒNG BỘ HÀO VÀ LIỆT KÊ KHÔNG TRÙNG ---")
+
+    try:
+        # 1. Back up dữ liệu gốc của File 2
+        if not os.path.exists(FILE_2_PATH):
+            print(f"X Lỗi: Không tìm thấy File 2 tại {FILE_2_PATH}")
+            return
+            
+        backup_2_path = FILE_2_PATH.replace(".xlsx", "_BACKUP_TASK2.xlsx")
+        shutil.copy(FILE_2_PATH, backup_2_path)
+        print(f"✔ Đã tạo bản sao lưu File 2 tại: {os.path.basename(backup_2_path)}")
+
+        # 2. Đọc dữ liệu
+        # Đọc File 1 (Lấy danh sách Discovery)
+        df1 = pd.read_excel(FILE_1_PATH, sheet_name='QC V1')
+        
+        # Đọc File 2
+        all_sheets_f2 = pd.read_excel(FILE_2_PATH, sheet_name=None)
+        sheet_name_f2 = list(all_sheets_f2.keys())[0] 
+        df2 = all_sheets_f2[sheet_name_f2]
+
+        # 3. Lọc danh sách Discovery từ File 1
+        # Lưu ý: Dùng 'SampleID' hoặc 'Sample ID' tùy theo file của bạn, ở đây dùng SampleID
+        discovery_series = df1[df1['Cohort'] == 'Discovery']['SampleID'].dropna().unique()
+        discovery_set = set(discovery_series)
+        print(f"[*] Tổng mẫu Discovery ở File 1: {len(discovery_set)}")
+
+        # 4. Bắt trùng và gán giá trị
+        col_name = "Bắt trùng Cohort File 450"
+        
+        # Lấy tập hợp SampleID có trong File 2
+        f2_sample_set = set(df2['SampleID'].dropna().unique())
+        
+        # Gán giá trị Discovery vào File 2
+        df2[col_name] = df2['SampleID'].apply(lambda x: 'Discovery' if x in discovery_set else "")
+        
+        # 5. LIỆT KÊ DANH SÁCH KHÔNG BẮT TRÙNG
+        # Những mẫu có trong File 1 nhưng KHÔNG có trong File 2
+        not_found_in_f2 = [sid for sid in discovery_set if sid not in f2_sample_set]
+
+        # 6. Lưu File 2 gốc
+        all_sheets_f2[sheet_name_f2] = df2
+        with pd.ExcelWriter(FILE_2_PATH, engine='openpyxl') as writer:
+            for name, sheet in all_sheets_f2.items():
+                sheet.to_excel(writer, sheet_name=name, index=False)
+        
+        print(f"✔ Đã cập nhật File 2 gốc thành công.")
+
+        # --- HIỂN THỊ KẾT QUẢ TRÊN VS CODE ---
+        print("\n" + "="*60)
+        print(f"{'BÁO CÁO ĐỐI CHIẾU MẪU':^60}")
+        print("="*60)
+        print(f"- Số mẫu Discovery khớp (trùng): {(df2[col_name] == 'Discovery').sum()}")
+        print(f"- Số mẫu Discovery KHÔNG khớp:   {len(not_found_in_f2)}")
+        print("-" * 60)
+        
+        if len(not_found_in_f2) > 0:
+            print("DANH SÁCH SAMPLE ID KHÔNG BẮT TRÙNG (CÓ Ở F1 NHƯNG THIẾU Ở F2):")
+            for i, sid in enumerate(not_found_in_f2, 1):
+                print(f"{i}. {sid}")
+        else:
+            print("✔ Tuyệt vời: Toàn bộ mẫu Discovery ở File 1 đều có mặt trong File 2.")
+        
+        print("-" * 60)
+        print("DANH SÁCH FILE 2 SAU KHI CẬP NHẬT (20 DÒNG ĐẦU):")
+        print(df2[['SampleID', col_name]].head(20).to_string(index=False))
+        print("="*60)
+
+    except Exception as e:
+        print(f"X Lỗi: {e}")
+
+if __name__ == "__main__":
+    execute_task_2_v2()
