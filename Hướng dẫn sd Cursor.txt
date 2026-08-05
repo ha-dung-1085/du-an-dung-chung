@@ -1,0 +1,24 @@
+Nếu đang ở trong một dự án khác: Nhấn Ctrl + Shift + P, gõ chữ Clone và chọn Git: Clone.
+--> Mục đích: đồng bộ dữ liệu từ Git hub về máy tính
+
+Cách đồng bộ dữ liệu mới nhất (Pull)
+Sau này, nếu bạn hoặc ai đó cập nhật code trên GitHub và bạn muốn lấy bản mới nhất về máy mình:
+Nhấn tổ hợp phím Ctrl + Shift + G (mở bảng Source Control).
+Nhấn vào biểu tượng Dấu 3 chấm (...) ở thanh bên trái.
+Chọn Pull. Cursor sẽ tự động tải các thay đổi mới nhất từ GitHub về máy bạn.
+
+Để đẩy dữ liệu (code) từ Cursor lên GitHub, bạn cần thực hiện quy trình gọi là "Push". Vì bạn đã cài đặt xong Git và đăng nhập thành công tài khoản YOUR_USERNAME, việc này giờ rất đơn giản.
+Hãy làm theo các bước sau:
+Bước 1: Mở bảng điều khiển Source Control
+Tại Cursor, nhấn tổ hợp phím Ctrl + Shift + G (hoặc nhấn vào biểu tượng 3 vòng tròn nối nhau ở thanh bên trái).
+Nếu bạn chưa tạo "kho" (Repository) cho dự án này, bạn sẽ thấy nút "Publish to GitHub". Nhấn vào đó.
+Bước 2: Chọn chế độ lưu trữ
+Một thanh menu sẽ hiện ra ở phía trên cùng:
+Publish to GitHub private repository: Chỉ mình bạn thấy (Nên chọn cái này).
+Publish to GitHub public repository: Mọi người đều thấy.
+Lưu ý: Cursor có thể hỏi bạn muốn đưa những file nào lên, hãy tích chọn tất cả (mặc định đã chọn hết) và nhấn OK.
+Bước 3: Cách cập nhật code sau này (Commit & Push)
+Sau lần đầu tiên đã "Publish", những lần sau khi bạn sửa code (ví dụ thêm lệnh mới vào file Untitled-1.py), bạn làm 3 bước nhỏ:
+Stage (Chuẩn bị): Nhấn dấu + bên cạnh tên file bạn vừa sửa trong bảng Source Control (hoặc nhấn dấu + ở dòng "Changes" để chọn tất cả).
+Commit (Ghi chú): Nhập một dòng ngắn gọn vào ô Message (ví dụ: "Cập nhật code đồng hồ"). Sau đó nhấn nút Commit.
+Sync Changes (Đồng bộ): Nhấn nút Sync Changes màu xanh vừa hiện ra để đẩy code lên web GitHub.
