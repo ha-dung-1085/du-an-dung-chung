@@ -16,6 +16,7 @@ Cập nhật thay đổi lên GITHUB→code
 git add .
 hoặc
 git add "tên file.đuôi mở rộng"
+Tiếp theo:
 git commit -m "thông tin thay đổi"
 git push origin main
 
