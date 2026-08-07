@@ -9,8 +9,16 @@ Cài đặt extension python, git, jupyter trong VS code
 Tải folder dùng chung về máy tính/mac→ code
 git clone https://github.com/username/TEN FOLDER.git
 
+1. Mở thư mục làm việc
 Vào đường dẫn đến folder dùng chung
-CD "tên folder dùng chung"
+CD "đường dẫn đến folder dùng chung"
+Lưu ý: Cách Hiển thị Thanh đường dẫn (Path Bar) cố định ở đáy Finder trên Macbook
+Giúp bạn luôn nhìn thấy vị trí của file ngay dưới đáy cửa sổ Finder:
+Mở ứng dụng Finder.
+Trên thanh menu góc trên màn hình, chọn Xem (View) 
+--> chọn Hiển thị thanh đường dẫn (Show Path Bar) (hoặc nhấn tổ hợp phím Option + Command + P).
+Nhìn xuống cạnh dưới cùng của cửa sổ Finder, bạn sẽ thấy đường dẫn thư mục đầy đủ. 
+Muốn sao chép, chỉ cần nhấp chuột phải vào tên file/thư mục ở thanh này --> chọn Sao chép dưới dạng tên đường dẫn.
 
 Cập nhật thay đổi lên GITHUB→code
 git add .
