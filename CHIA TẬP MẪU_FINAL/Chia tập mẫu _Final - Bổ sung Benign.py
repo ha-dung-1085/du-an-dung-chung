@@ -404,7 +404,7 @@ def generate_overall_summary(df):
 # ==============================================================================
 if __name__ == '__main__':
   # 1. Đọc dữ liệu
-  file_path = 'THU THẬP DỮ LIỆU_ĐỀ TÀI K DẠ DÀY_2024_FINAL.xlsx'
+  file_path = r'C:\Users\pc-008\Desktop\du-an-dung-chung\CHIA TẬP MẪU_FINAL\THU THẬP DỮ LIỆU_ĐỀ TÀI K DẠ DÀY_2024_FINAL - Bổ sung Benign.xlsx'
   df_raw = pd.read_excel(file_path, sheet_name='DS MẪU NC')
 
   # 2. Chuẩn hóa dữ liệu
